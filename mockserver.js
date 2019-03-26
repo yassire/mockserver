@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const colors = require('colors');
+const hash = require('object-hash');
 const join = path.join;
 const Combinatorics = require('js-combinatorics');
 const normalizeHeader = require('header-case-normalizer');
@@ -244,6 +245,15 @@ function getBodyOrQueryString(body, query) {
   return body;
 }
 
+function getBodyAndQueryHash(body ,query = {}) {
+  if (body && body !== '') {
+    const obj = { query, body }
+    return hash(obj);
+  }
+
+  return body;
+}
+
 /**
  * Ghetto way to get the body
  * out of the request.
@@ -269,7 +279,9 @@ function getBody(req, callback) {
 }
 
 function getMockedContent(path, prefix, body, query) {
-  const mockName = prefix + (getBodyOrQueryString(body, query) || '') + '.mock';
+  const requestHash = getBodyAndQueryHash(body, query);
+  const suffix = requestHash ? `.${requestHash}` : '';
+  const mockName = prefix + suffix + '.mock';
   const mockFile = join(mockserver.directory, path, mockName);
   let content;
 
