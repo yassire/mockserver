@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const colors = require('colors');
-const hash = require('object-hash');
+const stableStringify = require('json-stable-stringify');
+const crypto = require('crypto');
 const join = path.join;
 const Combinatorics = require('js-combinatorics');
 const normalizeHeader = require('header-case-normalizer');
@@ -248,10 +249,19 @@ function getBodyOrQueryString(body, query) {
 function getBodyAndQueryHash(body ,query = {}) {
   if (body && body !== '') {
     const obj = { query, body }
-    return hash(obj);
+    return generateHash(obj);
   }
 
   return body;
+}
+
+function generateHash(data) {
+  const stable = stableStringify(data);
+  const hash = crypto
+    .createHash("md5")
+    .update(stable)
+    .digest("hex");
+  return hash;
 }
 
 /**
