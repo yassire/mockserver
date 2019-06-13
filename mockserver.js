@@ -342,7 +342,7 @@ const mockserver = {
 
       const queryIndex = url.indexOf('?'),
         query =
-          queryIndex >= 0 ? url.substring(queryIndex).replace(/\?/g, '') : '',
+          queryIndex >= 0 ? url.substring(queryIndex).replace(/\?/g, '') : null,
         method = req.method.toUpperCase(),
         headers = [];
 
@@ -373,6 +373,11 @@ const mockserver = {
             return b.length - a.length;
           });
         permutations.push([]);
+      }
+
+      // check json headers
+      if (req.headers["content-type"] && req.headers["content-type"] === "application/json") {
+        body = JSON.parse(body);        
       }
 
       matched = getContentFromPermutations(
