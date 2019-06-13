@@ -342,7 +342,7 @@ const mockserver = {
 
       const queryIndex = url.indexOf('?'),
         query =
-          queryIndex >= 0 ? url.substring(queryIndex).replace(/\?/g, '') : null,
+          queryIndex >= 0 ? url.substring(queryIndex).replace(/\?/g, '') : {},
         method = req.method.toUpperCase(),
         headers = [];
 
